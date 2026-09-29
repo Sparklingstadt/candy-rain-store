@@ -3,7 +3,10 @@ const port = process.env.SHOPIFY_E2E_PORT || "3107"
 const baseURL = `http://127.0.0.1:${port}`
 export default defineConfig({
   testDir: "./tests/shopify", testMatch: "*.spec.ts", workers: 1,
-  use: { baseURL, trace: "retain-on-failure" },
+  forbidOnly: Boolean(process.env.CI),
+  retries: process.env.CI ? 2 : 0,
+  reporter: process.env.CI ? [["line"], ["html", { open: "never" }]] : "list",
+  use: { baseURL, trace: "retain-on-failure", screenshot: "only-on-failure" },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
     command: `node --import ./tests/shopify/mock-storefront.mjs node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port ${port}`,
