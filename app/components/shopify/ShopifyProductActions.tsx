@@ -1,5 +1,5 @@
 "use client"
-import Image from "next/image"
+import ProductImageGallery from "@/app/components/ProductImageGallery"
 import Link from "next/link"
 import { useActionState, useState } from "react"
 import { addShopifyItem } from "@/app/actions/shopifyActions"
@@ -14,9 +14,10 @@ export default function ShopifyProductActions({ product }: { product: ShopifyPro
   const variant = product.variants.nodes.find(v => v.id === id)
   const image = variant?.image ?? product.featuredImage
   return <div className="grid gap-10 lg:grid-cols-[1.2fr_.8fr]">
-    <div className="relative aspect-square overflow-hidden rounded-2xl bg-muted">
-      {image ? <Image src={image.url} alt={image.altText || product.title} fill sizes="(max-width: 1024px) 100vw, 60vw" className="object-contain" priority /> : <span className="flex h-full items-center justify-center text-muted-foreground">画像準備中</span>}
-    </div>
+    <ProductImageGallery key={`${product.id}:${id}`} initialSrc={image?.url} images={[
+      ...(product.featuredImage ? [{ src: product.featuredImage.url, alt: product.featuredImage.altText || product.title }] : []),
+      ...product.variants.nodes.flatMap(v => v.image ? [{ src: v.image.url, alt: v.image.altText || `${product.title} ${v.title}` }] : []),
+    ]} />
     <div className="space-y-6">
       <h1 className="text-4xl font-semibold tracking-tight">{product.title}</h1>
       <p className="text-2xl font-semibold text-primary">{money(variant?.price ?? product.priceRange.minVariantPrice)}</p>
