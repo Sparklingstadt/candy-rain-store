@@ -4,11 +4,12 @@ const originalFetch = globalThis.fetch
 const carts = new Map()
 const money = amount => ({ amount: String(amount), currencyCode: 'JPY' })
 const variants = [
-  { id: 'gid://shopify/ProductVariant/1', title: 'A', price: money(500), availableForSale: true, image: null },
-  { id: 'gid://shopify/ProductVariant/2', title: 'B', price: money(800), availableForSale: false, image: null },
+  { id: 'gid://shopify/ProductVariant/1', title: 'A', price: money(500), availableForSale: true, image: { url: '/products/candy/variant-1.webp', altText: 'テスト缶バッジ A' } },
+  { id: 'gid://shopify/ProductVariant/2', title: 'B', price: money(800), availableForSale: false, image: { url: '/products/candy/variant-2.webp', altText: 'テスト缶バッジ B' } },
 ]
+variants.push({ id: 'gid://shopify/ProductVariant/3', title: 'C', price: money(500), availableForSale: true, image: { url: '/products/candy/variant-3.webp', altText: 'テスト缶バッジ C' } })
 const product = {
-  id: 'gid://shopify/Product/1', handle: 'テスト缶バッジ', title: 'テスト缶バッジ', description: 'バリエーションを選べるグッズです。', productType: 'グッズ', availableForSale: true, featuredImage: null,
+  id: 'gid://shopify/Product/1', handle: 'テスト缶バッジ', title: 'テスト缶バッジ', description: 'バリエーションを選べるグッズです。', productType: 'グッズ', availableForSale: true, featuredImage: { url: '/products/candy/product-1.webp', altText: 'テスト缶バッジ 全体' },
   priceRange: { minVariantPrice: money(500) }, variants: { nodes: variants, pageInfo: { hasNextPage: false, endCursor: null } },
 }
 function recalculate(cart) {

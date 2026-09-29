@@ -130,3 +130,14 @@ test("カートで現在庫を超える数量増加を無効にする", async ({
     await database.query('UPDATE "Variant" SET stock = 50 WHERE id = $1', [0])
   }
 })
+
+test("商品画像を切り替えて全体画像へ戻せる", async ({ page }) => {
+  await signIn(page)
+  await page.goto("/products/1")
+  const gallery = page.getByRole("region", { name: "商品画像" })
+  await gallery.getByRole("button", { name: "クリアファイル Bの画像を表示" }).click()
+  await expect(gallery.getByRole("img")).toHaveAttribute("alt", "クリアファイル B")
+  await expect(gallery.getByRole("img")).toHaveAttribute("src", /variant-2/)
+  await gallery.getByRole("button", { name: "クリアファイルの画像を表示" }).click()
+  await expect(gallery.getByRole("img")).toHaveAttribute("alt", "クリアファイル")
+})

@@ -35,7 +35,7 @@ export default async function Page({ params }: {
     <div className="space-y-8">
       <Link href="/products" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ChevronLeft className="size-4" /> 商品一覧へ戻る</Link>
       <div className="grid gap-10 lg:grid-cols-[1.2fr_.8fr] lg:gap-16">
-        <ProductImageView productId={product.id} />
+        <ProductImageView product={product} variants={variants} />
         <div className="lg:sticky lg:top-24 lg:self-start">
           <div className="space-y-5">
             <Badge variant="secondary">{product.category || "カテゴリー指定なし"}</Badge>
