@@ -29,7 +29,7 @@ export default function StoreHeader({ cartItemCount, signedIn }: { cartItemCount
           <span className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <Sparkles className="size-4" />
           </span>
-          <span>Candy Rain</span>
+          <span>Candy Rain Store</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="メインナビゲーション">
@@ -64,7 +64,7 @@ export default function StoreHeader({ cartItemCount, signedIn }: { cartItemCount
             </SheetTrigger>
             <SheetContent>
               <SheetHeader>
-                <SheetTitle>Candy Rain</SheetTitle>
+                <SheetTitle>Candy Rain Store</SheetTitle>
                 <SheetDescription>{signedIn ? "サインイン中" : "ゲスト"} ・ ストアメニュー</SheetDescription>
               </SheetHeader>
               <nav className="flex flex-col gap-2 px-4" aria-label="モバイルナビゲーション">
