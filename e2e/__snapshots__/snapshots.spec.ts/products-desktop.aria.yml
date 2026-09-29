@@ -1,0 +1,34 @@
+- main:
+  - text: Collection
+  - heading "Products" [level=1]
+  - paragraph: 毎日に小さな彩りを添える、Candy Rain Storeのオリジナルグッズ。
+  - link /ランダム缶バッジ グッズ ランダム缶バッジ ¥\d+〜/:
+    - /url: /products/0
+    - img "ランダム缶バッジ"
+    - text: ""
+    - heading "ランダム缶バッジ" [level=2]
+    - paragraph: /¥\d+〜/
+  - link /クリアファイル グッズ クリアファイル ¥\d+〜/:
+    - /url: /products/1
+    - img "クリアファイル"
+    - text: ""
+    - heading "クリアファイル" [level=2]
+    - paragraph: /¥\d+〜/
+  - link /アクリルスタンド グッズ アクリルスタンド ¥\d+,\d+〜/:
+    - /url: /products/2
+    - img "アクリルスタンド"
+    - text: ""
+    - heading "アクリルスタンド" [level=2]
+    - paragraph: /¥\d+,\d+〜/
+  - link /タペストリー グッズ タペストリー ¥\d+,\d+〜/:
+    - /url: /products/3
+    - img "タペストリー"
+    - text: ""
+    - heading "タペストリー" [level=2]
+    - paragraph: /¥\d+,\d+〜/
+  - link /オリジナル TEE グッズ オリジナル TEE ¥\d+,\d+〜/:
+    - /url: /products/4
+    - img "オリジナル TEE"
+    - text: ""
+    - heading "オリジナル TEE" [level=2]
+    - paragraph: /¥\d+,\d+〜/

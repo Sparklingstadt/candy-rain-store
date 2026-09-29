@@ -1,0 +1,8 @@
+- main:
+  - link "商品一覧へ戻る":
+    - /url: /products
+  - text: Your cart
+  - heading "買い物かご" [level=1]
+  - paragraph: 0種類の商品が入っています。
+  - paragraph: カートの中は空です
+  - paragraph: お気に入りの商品を見つけて追加しましょう。

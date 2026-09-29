@@ -1,0 +1,19 @@
+- main:
+  - text: TS Member
+  - heading "Test Shopper" [level=1]
+  - paragraph: Candy Rain Store account
+  - button "Sign out"
+  - heading "注文履歴" [level=2]
+  - paragraph: 最近の注文と配送状況
+  - paragraph: 注文はまだありません
+  - paragraph: 最初の商品を選んでみましょう。
+  - text: お届け先住所 デモ用に登録された住所
+  - paragraph: Test Shopper
+  - paragraph: /\d+-\d+/
+  - paragraph: XX県 YY市 ZZ丁目 A-B-C号室
+  - link "住所を見る(1)":
+    - /url: /account/address
+  - text: プロフィール アカウント情報の確認
+  - paragraph: デモユーザーとしてサインインしています。
+  - link "アカウント情報を編集":
+    - /url: /account/edit
