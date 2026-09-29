@@ -62,7 +62,7 @@ npm run db:setup
 npm run dev
 ```
 
-以前の設定を使っていた場合は、既存の`.env`にある`DATABASE_URL`も`.env.example`と同じDocker用の接続先（ポート`5432`）へ更新してください。ポート競合を避けるため、Homebrewなどで起動しているローカルPostgreSQLは停止してください。
+以前の設定を使っていた場合は、既存の`.env`にある`DATABASE_URL`も`.env.example`と同じDocker用の接続先（ポート`5432`）へ更新してください。5432番を別のPostgreSQLが使用中の場合は、`.env`の`POSTGRES_PORT`と`DATABASE_URL`のポートを両方とも`5433`などの空きポートに変更できます。既存のPostgreSQLを停止する必要はありません。
 
 `npm run dev`はPostgreSQLコンテナが起動済みであることを確認してからNext.jsを起動します。DBだけを操作する場合は次のコマンドを使用します。
 
@@ -103,3 +103,21 @@ Node.js Test Runnerとtsxによる単体・DB統合テストに加え、Playwrig
 - 単体・統合テストの対象拡大
 - 入力バリデーションと認証・認可の強化
 - 有限在庫を扱う場合の在庫管理
+
+
+## キャンディーモチーフの商品素材
+
+商品5件・Variant 10件のWebP画像は `public/products/candy/` に配置しています。
+ランダム缶バッジはVariant 0のまま、5色の集合画像を使用します。
+
+- 編集可能なBlenderモデル・個別PNG/WebP・元テクスチャ：`assets/candy-collection/`
+- 素材一覧：`assets/candy-collection/index.html`（ブラウザーで直接開けます）
+- 商品ID・Variant IDと画像URLの対応：`assets/candy-collection/shop-assets/image-mapping.json`
+- 商品データとの照合記録：`assets/candy-collection/catalog-audit.md`
+
+`prisma/seed.ts` は配置済みの画像URLを使用します。既存レコードについても、IDと商品名（VariantはproductIdも）が一致する場合に画像URLだけを更新します。この画像更新では価格・在庫・商品名を変更しません。
+画像の配置だけでは既存DBのURLは変わりません。DBへ反映する場合は、接続先を確認して通常のseed手順を実行してください。seedには従来どおりデモユーザーのパスワード更新も含まれます。
+
+商品一覧・詳細画面は `lib/product-images.ts` を通じて同じ対応表の画像を参照するため、DBに旧プレースホルダーURLが残っていても新しい画像を表示します。対応表にない商品・VariantはDBの画像URLを引き続き使用します。
+
+Blenderモデル（`.blend`と番号付きバックアップ）は`.gitignore`で除外し、ローカルにのみ保持します。Git cloneで取得できるのはレンダリング画像・テクスチャ・生成スクリプト・対応表です。素材一覧のBlenderリンクはローカルにモデルがある場合に利用できます。

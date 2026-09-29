@@ -1,0 +1,91 @@
+{
+  "products": [
+    {
+      "id": 0,
+      "name": "ランダム缶バッジ",
+      "thumbnailImageUrl": "/products/candy/product-0.webp"
+    },
+    {
+      "id": 1,
+      "name": "クリアファイル",
+      "thumbnailImageUrl": "/products/candy/product-1.webp"
+    },
+    {
+      "id": 2,
+      "name": "アクリルスタンド",
+      "thumbnailImageUrl": "/products/candy/product-2.webp"
+    },
+    {
+      "id": 3,
+      "name": "タペストリー",
+      "thumbnailImageUrl": "/products/candy/product-3.webp"
+    },
+    {
+      "id": 4,
+      "name": "オリジナル TEE",
+      "thumbnailImageUrl": "/products/candy/product-4.webp"
+    }
+  ],
+  "variants": [
+    {
+      "id": 0,
+      "name": "ランダム缶バッジ",
+      "productId": 0,
+      "imageUrl": "/products/candy/variant-0.webp"
+    },
+    {
+      "id": 1,
+      "name": "クリアファイル A",
+      "productId": 1,
+      "imageUrl": "/products/candy/variant-1.webp"
+    },
+    {
+      "id": 2,
+      "name": "クリアファイル B",
+      "productId": 1,
+      "imageUrl": "/products/candy/variant-2.webp"
+    },
+    {
+      "id": 3,
+      "name": "アクリルスタンド A",
+      "productId": 2,
+      "imageUrl": "/products/candy/variant-3.webp"
+    },
+    {
+      "id": 4,
+      "name": "アクリルスタンド B",
+      "productId": 2,
+      "imageUrl": "/products/candy/variant-4.webp"
+    },
+    {
+      "id": 5,
+      "name": "アクリルスタンド C",
+      "productId": 2,
+      "imageUrl": "/products/candy/variant-5.webp"
+    },
+    {
+      "id": 6,
+      "name": "タペストリー A",
+      "productId": 3,
+      "imageUrl": "/products/candy/variant-6.webp"
+    },
+    {
+      "id": 7,
+      "name": "タペストリー B",
+      "productId": 3,
+      "imageUrl": "/products/candy/variant-7.webp"
+    },
+    {
+      "id": 8,
+      "name": "オリジナル TEE A",
+      "productId": 4,
+      "imageUrl": "/products/candy/variant-8.webp"
+    },
+    {
+      "id": 9,
+      "name": "オリジナル TEE B",
+      "productId": 4,
+      "imageUrl": "/products/candy/variant-9.webp"
+    }
+  ]
+}

@@ -45,3 +45,7 @@ yarn-error.log*
 next-env.d.ts
 
 /generated/prisma
+
+# Blender models and numbered backups (keep local copies)
+*.blend
+*.blend[0-9]*
