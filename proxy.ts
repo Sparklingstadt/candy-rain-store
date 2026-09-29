@@ -15,7 +15,7 @@ export const config = {
 
 export async function proxy(request: NextRequest, event: Parameters<typeof demoProxy>[1]) {
   if (isShopifyEnabled()) {
-    if (request.nextUrl.pathname === "/signin" || request.nextUrl.pathname === "/signout" || request.nextUrl.pathname.startsWith("/account/") || request.nextUrl.pathname.startsWith("/orders/")) return NextResponse.redirect(new URL("/account", request.url))
+    if (request.nextUrl.pathname === "/signin" || request.nextUrl.pathname === "/signout" || request.nextUrl.pathname.startsWith("/orders/")) return NextResponse.redirect(new URL("/account", request.url))
     return NextResponse.next()
   }
   const response = await demoProxy(request, event)

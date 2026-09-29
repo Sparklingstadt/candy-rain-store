@@ -10,7 +10,7 @@
 
 カートIDは秘密部分を含むためHttpOnly/SameSite=Lax Cookieに保存し、本番ではSecureを有効にします。クライアントへカートIDやprivate tokenは渡しません。数量は1〜99、カート更新対象は現在のCookieのカート内に存在する行だけです。更新時の上流userErrorsを成功として扱いません。GETの失敗を空カートとみなして新規作成しません。
 
-アカウント・注文履歴はShopifyのホスト型アカウント画面 `/account` に案内します。Customer Account APIでの独自マイページや既存PostgreSQLの注文履歴の移行は含みません。旧デモのServer ActionsはShopifyモードでDB変更しません。
+アカウント・注文履歴・プロフィール・住所管理はShopifyのホスト型お客様アカウントへ案内します。Customer Account APIでの独自マイページや既存PostgreSQLの注文履歴の移行は含みません。旧デモのServer ActionsはShopifyモードでDB変更しません。
 
 ## ローカル設定
 
@@ -75,3 +75,27 @@ npm run test:shopify
 依存関係監査で既存の脆弱性が検出されたため、互換範囲の更新をlockfileへ反映しました（Next.js 16.3.7 / Prisma 7.10.0）。Prismaが参照するmysql2は3.24.4へoverrideし、Prismaのメジャーダウングレードを避けています。npm auditは0件です。
 
 検証結果: 単体18件、DB統合8件、従来デモE2E8件、Shopify E2E3件が通過。lint・TypeScript・本番ビルドも通過しました。DBテストは専用の一時PostgreSQLで実施し、終了後にコンテナを削除しています。実接続のエラー画面は390pxで横はみ出し・JavaScriptエラーなし、Shopify CDN画像のNext.js最適化配信はHTTP 200を確認しました。
+
+
+## プロフィール・住所・支払い方法（#13 / #14 / #15）
+
+本番は Shopify に統一します。独自DBへの個人情報・カード保存や、Stripeとの二重決済は追加しません。従来の `COMMERCE_PROVIDER=demo` のプロフィール・住所画面はデモのままで、本機能の対象はShopifyモードです。
+
+- `/account`：注文履歴、プロフィール、住所、支払い案内の入口。
+- `/account/edit`：氏名・メールアドレスの編集手順と、Shopifyプロフィールへのリンク。
+- `/account/address`：複数住所・郵便番号・宛名の登録、編集、削除、既定住所の管理へのリンク。
+- `/account/payment`：Shopify Checkout内の支払い選択とカード入力の案内。
+- `/cart`：配送先と支払い方法を次の購入画面で選ぶことを明記。住所管理を経由してもカートは保持。
+
+`SHOPIFY_CUSTOMER_ACCOUNT_URL` に「設定 → お客様アカウント」のURLを設定します。Candy Rain Dev の確認値は `https://shopify.com/81291673636/account`。注文履歴はこのURL、プロフィール・住所は `/profile?locale=ja` へ案内します。HTTPSの `shopify.com/{数値ID}/account` のみ許可し、任意の転送先や認証情報を含むURLは拒否します。未設定環境は既存のストアドメインの `/account`、住所は `/account/addresses` を利用します。カスタムドメインを使う場合はURL検証とテストを別途更新してください。
+
+住所選択には購入画面側でも同じメールアドレスでログインしてください。このアプリは顧客アクセストークンを保持せず、Shopifyのホスト型セッションを使います。住所変更が過去の注文の配送先を更新するわけではありません。
+
+利用可能な支払い方法はShopifyのストア・配送先・通貨の設定によります。カード番号・有効期限・セキュリティコードはShopify Checkoutで入力し、アプリのDB・Cookie・ログには保存しません。一般のお客様アカウントでのカード保存はShopifyの対応プランが必要です。Shop Payを利用できる場合の保存カード管理はShop Pay側が担当します。現在の開発ストアでは独自の複数カード管理を提供せず、実際の請求も行いません。
+
+自動検証は単体21件、Shopify E2E7件（1280px / 390pxの管理ページ、導線、カート保持を含む）、lint・TypeScriptを含む本番ビルド。E2E内のShopify応答はモックです。ホスト型画面の保存・決済完了をモックテストで検証したものではありません。
+
+公式資料:
+- [顧客アカウント](https://help.shopify.com/en/manual/customers/customer-accounts)
+- [保存済み支払い方法の条件](https://help.shopify.com/en/manual/customers/customer-accounts/manage)
+- [ShopifyアカウントのURL](https://shopify.dev/docs/api/liquid/objects/routes)

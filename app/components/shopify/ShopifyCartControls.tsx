@@ -32,6 +32,13 @@ export default function ShopifyCartControls({ lines, subtotal }: { lines: Shopif
       <h2 className="text-xl font-semibold">ご注文内容</h2>
       <div className="flex justify-between"><span>小計</span><span className="font-semibold">{money(subtotal)}</span></div>
       <p className="text-sm text-muted-foreground">送料・税金・割引を含む最終金額は購入手続きで確認できます。</p>
+      <section aria-label="配送先とお支払い" className="space-y-3 text-sm">
+        <h3 className="font-semibold">配送先・お支払い方法を選択</h3>
+        <p>次のShopify購入画面でお届け先を入力できます。ログインすると登録済みの住所から選択できます。</p>
+        <Link href="/account/address" className="underline underline-offset-4">登録済みの住所を管理</Link>
+        <p>お支払い方法は購入画面で選択します。カード情報はその画面で入力してください。</p>
+        <Link href="/account/payment" className="underline underline-offset-4">お支払い方法について</Link>
+      </section>
       <form action={checkoutAction}><Button type="submit" className="w-full" disabled={busy || lines.some(line => !line.merchandise.availableForSale)}>{checkingOut ? "接続中…" : "購入手続きへ"}</Button></form>
       {checkoutState && <p role="alert">{checkoutState.message}</p>}
     </CardContent></Card>
