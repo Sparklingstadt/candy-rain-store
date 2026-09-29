@@ -10,6 +10,7 @@ const variants = [
 variants.push({ id: 'gid://shopify/ProductVariant/3', title: 'C', price: money(500), availableForSale: true, image: { url: '/products/candy/variant-3.webp', altText: 'テスト缶バッジ C' } })
 const product = {
   id: 'gid://shopify/Product/1', handle: 'テスト缶バッジ', title: 'テスト缶バッジ', description: 'バリエーションを選べるグッズです。', productType: 'グッズ', availableForSale: true, featuredImage: { url: '/products/candy/product-1.webp', altText: 'テスト缶バッジ 全体' },
+  images: { nodes: [{ url: '/products/candy/product-1.webp', altText: 'テスト缶バッジ 全体' }, { url: '/products/candy/variant-4.webp', altText: 'テスト缶バッジ 裏面' }] },
   priceRange: { minVariantPrice: money(500) }, variants: { nodes: variants, pageInfo: { hasNextPage: false, endCursor: null } },
 }
 function recalculate(cart) {
@@ -27,6 +28,7 @@ globalThis.fetch = async (input, init) => {
     if (v.after === 'error') return json({ errors: [{ message: 'upstream secret details' }] })
     return json({ data: { products: { nodes: v.after === 'empty' ? [] : [product], pageInfo: { hasNextPage: !v.after, endCursor: 'page2' } } } })
   }
+  if (query.includes('query CandyRainProduct(') && !query.includes('images(first:')) return json({ errors: [{ message: 'Product gallery must request images' }] })
   if (query.includes('query CandyRainProduct(')) return json({ data: { product: ['badge', product.handle].includes(v.handle) ? product : null } })
   if (query.includes('query CandyRainCart(')) return json({ data: { cart: carts.get(v.id) ?? null } })
   let field, cart

@@ -98,3 +98,14 @@ test("商品画像をクリックとキーボードで切り替え、購入す�
   expect(await mainImage.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0)
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
 })
+
+
+test("バリエーションに紐づかない商品画像も表示できる", async ({ page }) => {
+  await page.goto("/products/badge")
+  const gallery = page.getByRole("region", { name: "商品画像" })
+  await expect(gallery.getByRole("button", { name: "テスト缶バッジ 全体の画像を表示" })).toHaveCount(1)
+  await gallery.getByRole("button", { name: "テスト缶バッジ 裏面の画像を表示" }).click()
+  await expect(gallery.getByRole("img")).toHaveAttribute("alt", "テスト缶バッジ 裏面")
+  await expect(gallery.getByRole("img")).toHaveAttribute("src", /variant-4/)
+  await expect(page.getByLabel("バリエーション")).toHaveValue("gid://shopify/ProductVariant/1")
+})
