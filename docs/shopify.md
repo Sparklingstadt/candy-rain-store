@@ -1,6 +1,6 @@
 # Candy Rain Store の Shopify 連携
 
-対象: Sparklingstadt/prd-ec-shop / https://candy-rain-store.vercel.app
+対象: Sparklingstadt/prd-candy-rain-store / https://candy-rain-store.vercel.app
 
 ## 動作
 
