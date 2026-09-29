@@ -17,7 +17,11 @@ export default async function Page({ params }: {
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  if (isShopifyEnabled()) return <ShopifyProductDetail handle={id} />
+  if (isShopifyEnabled()) {
+    let handle: string
+    try { handle = decodeURIComponent(id) } catch { notFound() }
+    return <ShopifyProductDetail handle={handle} />
+  }
   const productId = toNonNegativeInteger(id)
   if (productId === null) notFound()
   await requireUserId()

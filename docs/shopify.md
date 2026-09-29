@@ -18,7 +18,7 @@
 
 ```dotenv
 COMMERCE_PROVIDER=shopify
-SHOPIFY_STORE_DOMAIN=spwgc6-w1.myshopify.com
+SHOPIFY_STORE_DOMAIN=candy-rain-dev.myshopify.com
 # Headless販売チャネルを使う場合のみ、発行されたprivate tokenを指定
 SHOPIFY_STOREFRONT_PRIVATE_TOKEN=
 ```
@@ -35,15 +35,13 @@ Storefront APIは2026-07を指定。トークンなしでも基本の商品・�
 
 ## 実ストアの確認結果と公開準備（2026-09-30 JST）
 
-接続済みストアはCandy Rain Store、JPY、試用プラン。実Storefront APIの読み取りは `Online Store channel is locked.` を返しました。したがって現時点で実商品取得〜実Checkoutの一連の動作を完了したとは扱っていません。
+現在の接続先は無料開発ストア Candy Rain Dev (`candy-rain-dev.myshopify.com`) です。Headlessチャネルのprivate tokenをサーバー側に設定し、既存サイトから商品取得・日本語ハンドルの商品詳細・カート・Shopify Checkoutを確認しました。利用者がテスト決済を確定し、注文 #1002 がHeadless経由のテスト注文・支払い済みとして登録されています。実際の請求はありません。
 
-1. Shopify管理画面で契約・販売チャネルの状態を確認し、Online Storeのロックを解消するかHeadlessチャネルを設定します。プラン変更・支払いはこの実装では行っていません。
-2. 下書き商品の価格・説明・画像・実在庫を確認し、販売する商品を有効化して使用する販売チャネルへ公開します。
-3. 決済・配送・税・アカウント設定を確認します。
-4. 上記環境変数をデプロイ先に設定し、承認されたpush/deployを実行します。
-5. 実ストアの商品一覧・バリエーション画像・カート・Shopify Checkoutへの遷移を確認します。テスト決済はShopifyのテスト設定で行い、実注文を不用意に確定しないでください。
+開発ストアには既存5商品・10バリエーションをテスト用に追加し、有効化しています。テスト商品の在庫は追跡していません。ストア作成時のサンプル商品も一覧に含まれます。本番URLにデプロイしても接続先はこの開発ストアであり、実販売用への切替は別途必要です。元の試用ストアの下書きはそのまま残しています。
 
-## 商品の下書き移行
+Vercel Productionには上記3環境変数を設定します。private tokenは機密値として保存し、リポジトリやブラウザに含めません。
+
+## 元の試用ストアへの下書き移行
 
 移行元は取得したリポジトリの `prisma/seed.ts`（ベースcommit cd8575e75236f532cb115c69b97fbe0e1425d862）の5商品・10バリエーションです。本番PostgreSQLのスナップショット移行ではありません。画像は既存公開サイトの固定画像をShopify CDNへ取り込み、バリエーション画像も関連付けました。空の説明はそのままです。
 

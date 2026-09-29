@@ -8,7 +8,7 @@ const variants = [
   { id: 'gid://shopify/ProductVariant/2', title: 'B', price: money(800), availableForSale: false, image: null },
 ]
 const product = {
-  id: 'gid://shopify/Product/1', handle: 'badge', title: 'テスト缶バッジ', description: 'バリエーションを選べるグッズです。', productType: 'グッズ', availableForSale: true, featuredImage: null,
+  id: 'gid://shopify/Product/1', handle: 'テスト缶バッジ', title: 'テスト缶バッジ', description: 'バリエーションを選べるグッズです。', productType: 'グッズ', availableForSale: true, featuredImage: null,
   priceRange: { minVariantPrice: money(500) }, variants: { nodes: variants, pageInfo: { hasNextPage: false, endCursor: null } },
 }
 function recalculate(cart) {
@@ -26,7 +26,7 @@ globalThis.fetch = async (input, init) => {
     if (v.after === 'error') return json({ errors: [{ message: 'upstream secret details' }] })
     return json({ data: { products: { nodes: v.after === 'empty' ? [] : [product], pageInfo: { hasNextPage: !v.after, endCursor: 'page2' } } } })
   }
-  if (query.includes('query CandyRainProduct(')) return json({ data: { product: v.handle === 'badge' ? product : null } })
+  if (query.includes('query CandyRainProduct(')) return json({ data: { product: ['badge', product.handle].includes(v.handle) ? product : null } })
   if (query.includes('query CandyRainCart(')) return json({ data: { cart: carts.get(v.id) ?? null } })
   let field, cart
   if (query.includes('mutation CandyRainCartCreate')) {
