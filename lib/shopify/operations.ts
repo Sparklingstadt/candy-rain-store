@@ -19,6 +19,7 @@ export const PRODUCTS = `query CandyRainProducts($after: String) {
 }`
 export const PRODUCT = `query CandyRainProduct($handle: String!, $after: String) {
   product(handle: $handle) { ${productFields}
+    images(first: 250) { nodes { url altText } }
     variants(first: 100, after: $after) { nodes { ${variantFields} } pageInfo { hasNextPage endCursor } }
   }
 }`

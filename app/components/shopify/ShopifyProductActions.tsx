@@ -3,12 +3,12 @@ import ProductImageGallery from "@/app/components/ProductImageGallery"
 import Link from "next/link"
 import { useActionState, useState } from "react"
 import { addShopifyItem } from "@/app/actions/shopifyActions"
-import { money, type ShopifyProduct } from "@/lib/shopify/types"
+import { money, type ShopifyProductDetail } from "@/lib/shopify/types"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-export default function ShopifyProductActions({ product }: { product: ShopifyProduct }) {
+export default function ShopifyProductActions({ product }: { product: ShopifyProductDetail }) {
   const [id, setId] = useState(product.variants.nodes.find(v => v.availableForSale)?.id ?? product.variants.nodes[0]?.id)
   const [state, action, pending] = useActionState(addShopifyItem, null)
   const variant = product.variants.nodes.find(v => v.id === id)
@@ -16,6 +16,7 @@ export default function ShopifyProductActions({ product }: { product: ShopifyPro
   return <div className="grid gap-10 lg:grid-cols-[1.2fr_.8fr]">
     <ProductImageGallery key={`${product.id}:${id}`} initialSrc={image?.url} images={[
       ...(product.featuredImage ? [{ src: product.featuredImage.url, alt: product.featuredImage.altText || product.title }] : []),
+      ...product.images.nodes.map((image, index) => ({ src: image.url, alt: image.altText || `${product.title} 画像${index + 1}` })),
       ...product.variants.nodes.flatMap(v => v.image ? [{ src: v.image.url, alt: v.image.altText || `${product.title} ${v.title}` }] : []),
     ]} />
     <div className="space-y-6">

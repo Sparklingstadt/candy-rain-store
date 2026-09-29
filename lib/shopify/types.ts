@@ -9,6 +9,7 @@ export type ShopifyProduct = {
   priceRange: { minVariantPrice: Money }
   variants: { nodes: ShopifyVariant[]; pageInfo: { hasNextPage: boolean; endCursor: string | null } }
 }
+export type ShopifyProductDetail = ShopifyProduct & { images: { nodes: ProductImage[] } }
 export type ShopifyCart = {
   id: string; checkoutUrl: string; totalQuantity: number
   cost: { subtotalAmount: Money; totalAmount: Money }
