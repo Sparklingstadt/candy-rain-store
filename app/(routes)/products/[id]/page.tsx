@@ -41,7 +41,7 @@ export default async function Page({ params }: {
             <Badge variant="secondary">{product.category || "カテゴリー指定なし"}</Badge>
             <h1 className="text-4xl font-semibold tracking-tight">{product.name}</h1>
             <p className="text-2xl font-semibold text-primary">¥{minPrice.toLocaleString()}〜</p>
-            <p className="leading-7 text-muted-foreground">{product.description || "日常にさりげない彩りを添える、Candy Rainのオリジナルアイテムです。"}</p>
+            <p className="leading-7 text-muted-foreground">{product.description || "日常にさりげない彩りを添える、Candy Rain Storeのオリジナルアイテムです。"}</p>
           </div>
           <Separator className="my-7" />
           <ProductActions variants={variants} />

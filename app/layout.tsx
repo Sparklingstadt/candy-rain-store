@@ -13,7 +13,7 @@ import StoreHeader from "@/app/components/StoreHeader";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "Candy Rain",
+  title: "Candy Rain Store",
   description: "EC Shopping app developed with Next.js v16",
 };
 

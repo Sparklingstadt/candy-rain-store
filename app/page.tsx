@@ -14,7 +14,7 @@ export default function Page(){
           <Badge variant="secondary" className="gap-1.5"><Sparkles /> {shopify ? "Candy Rain Store" : "Full-stack demo store"}</Badge>
           <div className="space-y-5">
             <h1 className="max-w-3xl text-5xl font-semibold tracking-[-0.04em] sm:text-6xl lg:text-7xl">小さなときめきを、ひと箱に。</h1>
-            <p className="max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">{shopify ? "毎日に小さな彩りを添える、Candy Rainのオリジナルグッズをお届けします。" : "Candy Rainは、商品選びから注文履歴までのEC購入体験を実装したデモストアです。"}</p>
+            <p className="max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">{shopify ? "毎日に小さな彩りを添える、Candy Rain Storeのオリジナルグッズをお届けします。" : "Candy Rain Storeは、商品選びから注文履歴までのEC購入体験を実装したデモストアです。"}</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link href="/products" className={buttonVariants({ size: "lg", className: "h-11 px-5" })}>商品を見る <ArrowRight /></Link>
