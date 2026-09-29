@@ -1,7 +1,9 @@
+import { isShopifyEnabled } from "@/lib/shopify/config"
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
 export async function requireUserId(){
+  if (isShopifyEnabled()) redirect("/account")
   const session = await auth()
   if(!session || !session.user || !session.user.id) redirect("/signin")
 

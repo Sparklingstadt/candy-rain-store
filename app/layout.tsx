@@ -1,3 +1,5 @@
+import { isShopifyEnabled } from "@/lib/shopify/config"
+import { getShopifyCart } from "@/lib/shopify/cart"
 import type { Metadata } from "next";
 import "./globals.css";
 import { getCartByUserId } from "@/services/storeQueryService";
@@ -20,8 +22,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth()
+  const shopify = isShopifyEnabled()
+  const session = shopify ? null : await auth()
   let cartItemCount = 0
+  if (shopify) {
+    try { cartItemCount = (await getShopifyCart())?.totalQuantity ?? 0 } catch { /* Cart page provides a retry message. */ }
+  }
   if(session?.user){
     const cartRepo = new cartRepository()
     const cart = await getCartByUserId(cartRepo, parseInt(session.user.id))
@@ -41,7 +47,7 @@ export default async function RootLayout({
         <footer className="mt-16 border-t bg-card/60">
           <div className="page-shell flex flex-col gap-2 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <p>© 2026 Candy Rain Store</p>
-            <p>正常系の購入体験を検証するデモストア</p>
+            <p>{shopify ? "小さなときめきを、ひと箱に。" : "正常系の購入体験を検証するデモストア"}</p>
           </div>
         </footer>
       </body>

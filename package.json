@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "npm@11.6.2",
   "scripts": {
-    "dev": "npm run env:check && npm run db:start && next dev",
+    "dev": "node scripts/dev.mjs",
     "build": "prisma generate && next build",
     "db:start": "docker compose up -d --wait db",
     "db:stop": "docker compose down",
@@ -14,11 +14,12 @@
     "db:seed": "prisma db seed",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test services/checkout/orderPricing.test.mts repositories/entities/entities.test.mts lib/validation.test.mts",
+    "test": "tsx --test services/checkout/orderPricing.test.mts repositories/entities/entities.test.mts lib/validation.test.mts lib/shopify/validation.test.mts",
     "test:integration": "tsx --test tests/integration/checkout.test.mts",
     "test:e2e": "tsx prisma/reset-e2e.ts && playwright test",
     "test:e2e:ui": "tsx prisma/reset-e2e.ts && playwright test --ui",
-    "env:check": "node scripts/check-docker-env.mjs"
+    "env:check": "node scripts/check-docker-env.mjs",
+    "test:shopify": "playwright test --config playwright.shopify.config.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -52,6 +53,9 @@
     "typescript": "^5"
   },
   "overrides": {
-    "deepmerge-ts": "8.0.2"
+    "deepmerge-ts": "8.0.2",
+    "prisma": {
+      "mysql2": "3.24.4"
+    }
   }
 }
