@@ -2,13 +2,20 @@ name: CI
 
 on:
   pull_request:
-    branches: [main, dev]
   push:
     branches: [main, dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  CI: "true"
+  NEXT_TELEMETRY_DISABLED: "1"
 
 jobs:
   verify:
@@ -18,18 +25,20 @@ jobs:
       DATABASE_URL: postgresql://user:pass@localhost:5432/candyrain
       AUTH_SECRET: ci-only-secret
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
           cache: npm
       - run: npm install --global npm@11.6.2
       - run: npm ci
       - run: npm audit --audit-level=moderate
+      - run: node --test scripts/ci/release.test.mjs
       - run: npm test
       - run: npm run lint
-      - run: npx prisma generate
-      - run: npx tsc --noEmit
+      - run: npm run typecheck
       - run: npm run build
 
   e2e:
@@ -52,10 +61,11 @@ jobs:
     env:
       DATABASE_URL: postgresql://user:pass@127.0.0.1:5432/candyrain
       AUTH_SECRET: ci-only-secret
-      CI: true
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
           cache: npm
@@ -63,14 +73,16 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npx prisma generate
+      - run: npx prisma validate
       - run: npm run db:migrate
+      - run: npx prisma migrate status
       - run: npm run db:seed
       - run: npm run test:integration
       - run: npm run test:e2e
-      - uses: actions/upload-artifact@v4
-        if: failure()
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: ${{ !cancelled() }}
         with:
-          name: playwright-report
+          name: playwright-local
           path: |
             playwright-report/
             test-results/
@@ -84,8 +96,10 @@ jobs:
       SHOPIFY_STORE_DOMAIN: candy-rain-test.myshopify.com
       AUTH_SECRET: ci-only-secret
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
           cache: npm
@@ -94,3 +108,52 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run build
       - run: npm run test:shopify
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-shopify
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  ci:
+    name: CI passed
+    if: ${{ always() }}
+    needs: [verify, e2e, shopify]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require every verification job to succeed
+        env:
+          VERIFY_RESULT: ${{ needs.verify.result }}
+          E2E_RESULT: ${{ needs.e2e.result }}
+          SHOPIFY_RESULT: ${{ needs.shopify.result }}
+        run: |
+          test "$VERIFY_RESULT" = success
+          test "$E2E_RESULT" = success
+          test "$SHOPIFY_RESULT" = success
+
+  release:
+    needs: [ci]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    concurrency:
+      group: publish-github-release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+      - name: Publish release for the verified commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/ci/release.mjs

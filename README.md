@@ -131,8 +131,7 @@ npm run dev
 ```bash
 npm test                   # 単体テスト
 npm run lint
-npx prisma generate
-npx tsc --noEmit
+npm run typecheck          # Prisma・Next.js の型生成も含む
 npm run build
 npm run test:integration   # DB 統合テスト（DB デモ）
 npm run test:e2e           # ブラウザー E2E（DB デモ）
@@ -141,7 +140,22 @@ npm run test:shopify       # Storefront API を差し替えた E2E
 
 DB 統合・E2E テストには migration と seed を適用した専用のローカル PostgreSQL を使用してください。`test:e2e` はデータをリセットするため、共有 DB や本番 DB を対象にしないでください。Playwright の初回実行前には `npx playwright install chromium` を実行します。Shopify E2E は本番ビルドを起動するので、先に `npm run build` が必要です。実ストアへの注文や決済は送信しません。
 
-[GitHub Actions](.github/workflows/ci.yml) では main・dev への push と Pull Request を対象に、依存関係監査、単体テスト、lint、型チェック、ビルド、DB 統合・E2E、Shopify E2E を実行します。
+[GitHub Actions](.github/workflows/ci.yml) は main・dev への push、すべての Pull Request、手動実行を対象に次のチェックを実行します。
+
+| ジョブ | 検証内容 |
+| --- | --- |
+| `verify` | npm audit（moderate 以上で失敗）、単体テスト、lint、Prisma・Next.js の型生成と TypeScript チェック、本番ビルド |
+| `e2e` | 一時的な PostgreSQL 18 に schema 検証・migration・seed を適用し、DB 統合テストと DB デモの Playwright テスト |
+| `shopify` | Shopify モードの本番ビルドと、モック Storefront API を使った Playwright テスト |
+| `CI passed` | 上記3ジョブがすべて成功したことを確認（失敗・キャンセル・スキップは不合格） |
+
+ブランチ保護の必須チェックには `CI passed` を指定できます（リポジトリ側で別途設定）。両 E2E ジョブの HTML レポートと失敗時の trace・スクリーンショットは、それぞれ `playwright-local` / `playwright-shopify` Artifact に7日間保存します。両モードで CI 中の `test.only` を禁止します。テストは一時 DB とモック API を使い、本番の認証情報を必要としません。
+
+Actions はコミット SHA に固定し、Dependabot が毎週更新 PR を作成します。検証と migration の権限は `contents: read` に限定し、checkout 後に Git 認証情報を保持しません。新しいコミットが届いた場合は同じ PR の古い CI をキャンセルします。参考：[GitHub の安全な Actions 運用](https://docs.github.com/en/actions/reference/security/secure-use)、[Playwright の CI ガイド](https://playwright.dev/docs/ci)。
+
+main への push では、3つの検証ジョブと `CI passed` の成功後に `release` ジョブが GitHub Release を自動作成します。PR・dev への push・手動実行では Release を作成しません。既存の最大の安定版タグ `vX.Y.Z` の patch を1つ増やし（例：`v0.9.0` → `v0.9.1`）、検証したコミット SHA にタグを付けてリリースノートを自動生成します。同じ SHA の公開済み Release は再利用し、タグだけ作成済みの場合はそのタグで再試行します。既存の draft/prerelease は上書きしません。Release のタグが検証済み SHA と一致することも確認します。
+
+書き込み権限は `release` ジョブだけに付与し、リリース処理は直列化します。main の実行は新しい push で中断しません。Vercel デプロイは別途行い、本番 DB の migration は既存の手動ワークフローを使用します。
 
 本番は [Vercel](https://candy-rain-store.vercel.app) で公開しています。通常のビルドは DB を更新しません。DB デモの migration は対象の `DATABASE_URL` を確認して `npm run db:migrate` を実行するか、[Migrate production database](.github/workflows/migrate-production.yml) を手動実行します。後者では GitHub の `production` Environment に `DATABASE_URL` secret を設定します。
 
