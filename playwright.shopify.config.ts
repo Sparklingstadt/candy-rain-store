@@ -8,6 +8,6 @@ export default defineConfig({
   webServer: {
     command: `node --import ./tests/shopify/mock-storefront.mjs node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port ${port}`,
     url: baseURL, timeout: 60_000, reuseExistingServer: false,
-    env: { COMMERCE_PROVIDER: "shopify", SHOPIFY_STORE_DOMAIN: "candy-rain-test.myshopify.com", SHOPIFY_STOREFRONT_PRIVATE_TOKEN: "", AUTH_SECRET: "test-only-not-used-for-shopify", AUTH_TRUST_HOST: "true" },
+    env: { COMMERCE_PROVIDER: "shopify", SHOPIFY_STORE_DOMAIN: "candy-rain-test.myshopify.com", SHOPIFY_STOREFRONT_PRIVATE_TOKEN: "", SHOPIFY_CUSTOMER_ACCOUNT_URL: "https://shopify.com/12345/account", AUTH_SECRET: "test-only-not-used-for-shopify", AUTH_TRUST_HOST: "true" },
   },
 })

@@ -1,9 +1,12 @@
+import { isShopifyEnabled } from "@/lib/shopify/config"
+import ShopifyAccountManagement from "@/app/components/shopify/ShopifyAccountManagement"
 import Link from "next/link"
 import { ChevronLeft, MapPin } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function Page(){
+  if (isShopifyEnabled()) return <ShopifyAccountManagement section="addresses" />
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <Link href="/account" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ChevronLeft className="size-4" /> アカウントへ戻る</Link>

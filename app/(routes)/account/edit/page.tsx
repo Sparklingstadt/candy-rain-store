@@ -1,3 +1,5 @@
+import { isShopifyEnabled } from "@/lib/shopify/config"
+import ShopifyAccountManagement from "@/app/components/shopify/ShopifyAccountManagement"
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -7,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 export default function Page(){
+  if (isShopifyEnabled()) return <ShopifyAccountManagement section="profile" />
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <Link href="/account" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ChevronLeft className="size-4" /> アカウントへ戻る</Link>
