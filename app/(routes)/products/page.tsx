@@ -1,3 +1,5 @@
+import { isShopifyEnabled } from "@/lib/shopify/config"
+import ShopifyCatalog from "@/app/components/shopify/ShopifyCatalog"
 import { getProductsWithVariants } from "@/services/storeQueryService"
 import ProductList from "./ProductList"
 import { Suspense } from "react"
@@ -5,9 +7,11 @@ import { ProductRepository } from "@/repositories/implementations/productReposit
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export default function Page(){
+export default async function Page({ searchParams }: { searchParams: Promise<{ after?: string }> }){
+  const shopify = isShopifyEnabled()
+  const { after } = await searchParams
   const repo = new ProductRepository()
-  const products = getProductsWithVariants(repo)
+  const products = shopify ? null : getProductsWithVariants(repo)
 
   return (
     <div className="space-y-8">
@@ -17,7 +21,7 @@ export default function Page(){
         <p className="max-w-2xl text-muted-foreground">毎日に小さな彩りを添える、Candy Rainのオリジナルグッズ。</p>
       </div>
       <Suspense fallback={<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{[1,2,3].map(i => <Skeleton key={i} className="aspect-[4/3] rounded-2xl" />)}</div>}>
-        <ProductList productsPromise={products} />
+        {shopify ? <ShopifyCatalog after={after} /> : <ProductList productsPromise={products!} />}
       </Suspense>
     </div>
   )
