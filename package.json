@@ -14,7 +14,7 @@
     "db:seed": "prisma db seed",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test services/checkout/orderPricing.test.mts repositories/entities/entities.test.mts lib/validation.test.mts",
+    "test": "tsx --test services/checkout/orderPricing.test.mts repositories/entities/entities.test.mts lib/validation.test.mts lib/product-images.test.mts",
     "test:integration": "tsx --test tests/integration/checkout.test.mts",
     "test:e2e": "tsx prisma/reset-e2e.ts && playwright test",
     "test:e2e:ui": "tsx prisma/reset-e2e.ts && playwright test --ui",
@@ -52,6 +52,7 @@
     "typescript": "^5"
   },
   "overrides": {
-    "deepmerge-ts": "8.0.2"
+    "deepmerge-ts": "8.0.2",
+    "mysql2": "3.24.4"
   }
 }

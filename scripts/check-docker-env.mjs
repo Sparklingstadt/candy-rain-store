@@ -2,7 +2,7 @@ import "dotenv/config"
 
 const expected = {
   hostname: new Set(["localhost", "127.0.0.1"]),
-  port: "5432",
+  port: process.env.POSTGRES_PORT || "5432",
   username: "user",
   password: "pass",
   database: "candyrain",

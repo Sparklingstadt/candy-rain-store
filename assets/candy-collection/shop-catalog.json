@@ -1,0 +1,225 @@
+{
+  "source": {
+    "repository": "prd-ec-shop",
+    "file": "prisma/seed.ts",
+    "gitCommit": "cd8575e75236f532cb115c69b97fbe0e1425d862",
+    "sha256": "722cee987c61d5762124e3b2e7af42b916399f5636079231461d141fc9b20d33",
+    "basis": "repository seed; live database not queried"
+  },
+  "summary": {
+    "products": 5,
+    "variants": 10,
+    "visualAssets": 14,
+    "newVisualAssets": 4,
+    "missingAfterGeneration": []
+  },
+  "skuNote": "SKU専用フィールドはなく、Variant.idで照合。ランダム缶バッジ5色は1つのVariantに対応。",
+  "products": [
+    {
+      "id": 0,
+      "name": "ランダム缶バッジ",
+      "oldImageUrl": "/products/Rectangle 1.png",
+      "thumbnailImageUrl": "/products/candy/product-0.webp",
+      "preview": "renders/product-0.png",
+      "model": "models/product-0.blend",
+      "variantIds": [
+        0
+      ]
+    },
+    {
+      "id": 1,
+      "name": "クリアファイル",
+      "oldImageUrl": "/products/Rectangle 2.png",
+      "thumbnailImageUrl": "/products/candy/product-1.webp",
+      "preview": "renders/product-1.png",
+      "model": "models/product-1.blend",
+      "variantIds": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": 2,
+      "name": "アクリルスタンド",
+      "oldImageUrl": "/products/Rectangle 2.png",
+      "thumbnailImageUrl": "/products/candy/product-2.webp",
+      "preview": "renders/product-2.png",
+      "model": "models/product-2.blend",
+      "variantIds": [
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": 3,
+      "name": "タペストリー",
+      "oldImageUrl": "/products/Rectangle 2.png",
+      "thumbnailImageUrl": "/products/candy/product-3.webp",
+      "preview": "renders/product-3.png",
+      "model": "models/product-3.blend",
+      "variantIds": [
+        6,
+        7
+      ]
+    },
+    {
+      "id": 4,
+      "name": "オリジナル TEE",
+      "oldImageUrl": "/products/Rectangle 2.png",
+      "thumbnailImageUrl": "/products/candy/product-4.webp",
+      "preview": "renders/product-4.png",
+      "model": "models/product-4.blend",
+      "variantIds": [
+        8,
+        9
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "id": 0,
+      "productId": 0,
+      "name": "ランダム缶バッジ",
+      "price": 500,
+      "stock": 50,
+      "oldImageUrl": "/products/Rectangle 1.png",
+      "imageUrl": "/products/candy/variant-0.webp",
+      "assetIds": [
+        "badge-strawberry",
+        "badge-mint",
+        "badge-lavender",
+        "badge-soda",
+        "badge-lemon"
+      ],
+      "color": null,
+      "note": "全5色のいずれか。色ごとの販売SKU追加は不要。"
+    },
+    {
+      "id": 1,
+      "productId": 1,
+      "name": "クリアファイル A",
+      "price": 800,
+      "stock": 50,
+      "oldImageUrl": "/products/Rectangle 3.png",
+      "imageUrl": "/products/candy/variant-1.webp",
+      "assetIds": [
+        "clearfile-strawberry"
+      ],
+      "color": "ストロベリーピンク",
+      "note": ""
+    },
+    {
+      "id": 2,
+      "productId": 1,
+      "name": "クリアファイル B",
+      "price": 800,
+      "stock": 50,
+      "oldImageUrl": "/products/Rectangle 4.png",
+      "imageUrl": "/products/candy/variant-2.webp",
+      "assetIds": [
+        "clearfile-soda"
+      ],
+      "color": "ソーダブルー",
+      "note": ""
+    },
+    {
+      "id": 3,
+      "productId": 2,
+      "name": "アクリルスタンド A",
+      "price": 1500,
+      "stock": 50,
+      "oldImageUrl": "/products/Rectangle 3.png",
+      "imageUrl": "/products/candy/variant-3.webp",
+      "assetIds": [
+        "stand-strawberry"
+      ],
+      "color": "ストロベリーピンク",
+      "note": ""
+    },
+    {
+      "id": 4,
+      "productId": 2,
+      "name": "アクリルスタンド B",
+      "price": 1500,
+      "stock": 50,
+      "oldImageUrl": "/products/Rectangle 4.png",
+      "imageUrl": "/products/candy/variant-4.webp",
+      "assetIds": [
+        "stand-mint"
+      ],
+      "color": "ミントグリーン",
+      "note": ""
+    },
+    {
+      "id": 5,
+      "productId": 2,
+      "name": "アクリルスタンド C",
+      "price": 1500,
+      "stock": 50,
+      "oldImageUrl": "/products/Rectangle 3.png",
+      "imageUrl": "/products/candy/variant-5.webp",
+      "assetIds": [
+        "stand-lavender"
+      ],
+      "color": "ラベンダー",
+      "note": ""
+    },
+    {
+      "id": 6,
+      "productId": 3,
+      "name": "タペストリー A",
+      "price": 4500,
+      "stock": 50,
+      "oldImageUrl": "/products/Rectangle 3.png",
+      "imageUrl": "/products/candy/variant-6.webp",
+      "assetIds": [
+        "tapestry-strawberry"
+      ],
+      "color": "ストロベリーピンク",
+      "note": ""
+    },
+    {
+      "id": 7,
+      "productId": 3,
+      "name": "タペストリー B",
+      "price": 4500,
+      "stock": 50,
+      "oldImageUrl": "/products/Rectangle 4.png",
+      "imageUrl": "/products/candy/variant-7.webp",
+      "assetIds": [
+        "tapestry-soda"
+      ],
+      "color": "ソーダブルー",
+      "note": ""
+    },
+    {
+      "id": 8,
+      "productId": 4,
+      "name": "オリジナル TEE A",
+      "price": 6500,
+      "stock": 50,
+      "oldImageUrl": "/products/Rectangle 3.png",
+      "imageUrl": "/products/candy/variant-8.webp",
+      "assetIds": [
+        "tee-strawberry"
+      ],
+      "color": "ストロベリーピンク",
+      "note": ""
+    },
+    {
+      "id": 9,
+      "productId": 4,
+      "name": "オリジナル TEE B",
+      "price": 6500,
+      "stock": 50,
+      "oldImageUrl": "/products/Rectangle 4.png",
+      "imageUrl": "/products/candy/variant-9.webp",
+      "assetIds": [
+        "tee-soda"
+      ],
+      "color": "ソーダブルー",
+      "note": ""
+    }
+  ]
+}
