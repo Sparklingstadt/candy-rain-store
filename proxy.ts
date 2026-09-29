@@ -10,7 +10,7 @@ const demoProxy = auth((req) => {
 })
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|svg)$).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|svg|webp)$).*)"],
 }
 
 export function proxy(request: NextRequest, event: Parameters<typeof demoProxy>[1]) {

@@ -1,3 +1,4 @@
+import { getProductImageUrl, getVariantImageUrl } from "@/lib/product-images"
 import { getProductById, getVariantsByProductId } from "@/services/storeQueryService"
 import { ProductRepository } from "@/repositories/implementations/productRepository"
 import { variantRepository } from "@/repositories/implementations/variantRepository"
@@ -13,12 +14,12 @@ export default async function ProductImageView({ productId }: { productId: numbe
   return (
     <div className="space-y-4">
       <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border bg-muted shadow-sm">
-        <Image src={product.thumbnailImageUrl} alt={product.name} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 60vw" priority />
+        <Image src={getProductImageUrl(product)} alt={product.name} fill className="object-contain" sizes="(max-width: 1024px) 100vw, 60vw" priority />
       </div>
       <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
         { variants.map(v => (
           <div key={v.id} className="relative aspect-square overflow-hidden rounded-xl border bg-muted">
-            <Image src={v.imageUrl} alt={v.name} fill className="object-cover" sizes="160px" />
+            <Image src={getVariantImageUrl(v)} alt={v.name} fill className="object-contain" sizes="160px" />
           </div>
         ))}          
       </div>

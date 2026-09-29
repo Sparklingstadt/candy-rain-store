@@ -1,40 +1,52 @@
 import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
+import imageMapping from "../assets/candy-collection/shop-assets/image-mapping.json";
 
 async function main() {
   const demoPasswordHash = await hash("demo-password", 12)
 
   await prisma.product.createMany({
     data: [
-      { id: 0, name: "ランダム缶バッジ", category: "グッズ", description: "", thumbnailImageUrl: "/products/Rectangle 1.png" },
-      { id: 1, name: "クリアファイル", category: "グッズ", description: "", thumbnailImageUrl: "/products/Rectangle 2.png" },
-      { id: 2, name: "アクリルスタンド", category: "グッズ", description: "", thumbnailImageUrl: "/products/Rectangle 2.png" },
-      { id: 3, name: "タペストリー", category: "グッズ", description: "", thumbnailImageUrl: "/products/Rectangle 2.png" },
-      { id: 4, name: "オリジナル TEE", category: "グッズ", description: "", thumbnailImageUrl: "/products/Rectangle 2.png" },
+      { id: 0, name: "ランダム缶バッジ", category: "グッズ", description: "", thumbnailImageUrl: "/products/candy/product-0.webp" },
+      { id: 1, name: "クリアファイル", category: "グッズ", description: "", thumbnailImageUrl: "/products/candy/product-1.webp" },
+      { id: 2, name: "アクリルスタンド", category: "グッズ", description: "", thumbnailImageUrl: "/products/candy/product-2.webp" },
+      { id: 3, name: "タペストリー", category: "グッズ", description: "", thumbnailImageUrl: "/products/candy/product-3.webp" },
+      { id: 4, name: "オリジナル TEE", category: "グッズ", description: "", thumbnailImageUrl: "/products/candy/product-4.webp" },
     ],
     skipDuplicates: true
   })
 
   await prisma.variant.createMany({
     data: [
-      { id: 0, name: "ランダム缶バッジ", productId: 0, price: 500, stock: 50, imageUrl: "/products/Rectangle 1.png" },
-      { id: 1, name: "クリアファイル A", productId: 1, price: 800, stock: 50, imageUrl: "/products/Rectangle 3.png" },
-      { id: 2, name: "クリアファイル B", productId: 1, price: 800, stock: 50, imageUrl: "/products/Rectangle 4.png" },
-      { id: 3, name: "アクリルスタンド A", productId: 2, price: 1500, stock: 50, imageUrl: "/products/Rectangle 3.png" },
-      { id: 4, name: "アクリルスタンド B", productId: 2, price: 1500, stock: 50, imageUrl: "/products/Rectangle 4.png" },
-      { id: 5, name: "アクリルスタンド C", productId: 2, price: 1500, stock: 50, imageUrl: "/products/Rectangle 3.png" },
-      { id: 6, name: "タペストリー A", productId: 3, price: 4500, stock: 50, imageUrl: "/products/Rectangle 3.png" },
-      { id: 7, name: "タペストリー B", productId: 3, price: 4500, stock: 50, imageUrl: "/products/Rectangle 4.png" },
-      { id: 8, name: "オリジナル TEE A", productId: 4, price: 6500, stock: 50, imageUrl: "/products/Rectangle 3.png" },
-      { id: 9, name: "オリジナル TEE B", productId: 4, price: 6500, stock: 50, imageUrl: "/products/Rectangle 4.png" },
+      { id: 0, name: "ランダム缶バッジ", productId: 0, price: 500, stock: 50, imageUrl: "/products/candy/variant-0.webp" },
+      { id: 1, name: "クリアファイル A", productId: 1, price: 800, stock: 50, imageUrl: "/products/candy/variant-1.webp" },
+      { id: 2, name: "クリアファイル B", productId: 1, price: 800, stock: 50, imageUrl: "/products/candy/variant-2.webp" },
+      { id: 3, name: "アクリルスタンド A", productId: 2, price: 1500, stock: 50, imageUrl: "/products/candy/variant-3.webp" },
+      { id: 4, name: "アクリルスタンド B", productId: 2, price: 1500, stock: 50, imageUrl: "/products/candy/variant-4.webp" },
+      { id: 5, name: "アクリルスタンド C", productId: 2, price: 1500, stock: 50, imageUrl: "/products/candy/variant-5.webp" },
+      { id: 6, name: "タペストリー A", productId: 3, price: 4500, stock: 50, imageUrl: "/products/candy/variant-6.webp" },
+      { id: 7, name: "タペストリー B", productId: 3, price: 4500, stock: 50, imageUrl: "/products/candy/variant-7.webp" },
+      { id: 8, name: "オリジナル TEE A", productId: 4, price: 6500, stock: 50, imageUrl: "/products/candy/variant-8.webp" },
+      { id: 9, name: "オリジナル TEE B", productId: 4, price: 6500, stock: 50, imageUrl: "/products/candy/variant-9.webp" },
     ],
     skipDuplicates: true
   })
 
-  await prisma.variant.update({
-    where: { id: 5 },
-    data: { imageUrl: "/products/Rectangle 3.png" }
-  })
+  // createMany skips existing IDs; refresh only the matching catalog images.
+  await prisma.$transaction([
+    ...imageMapping.products.map(({ id, name, thumbnailImageUrl }) =>
+      prisma.product.updateMany({
+        where: { id, name },
+        data: { thumbnailImageUrl },
+      })
+    ),
+    ...imageMapping.variants.map(({ id, name, productId, imageUrl }) =>
+      prisma.variant.updateMany({
+        where: { id, name, productId },
+        data: { imageUrl },
+      })
+    ),
+  ])
 
   await prisma.user.createMany({
     data: [

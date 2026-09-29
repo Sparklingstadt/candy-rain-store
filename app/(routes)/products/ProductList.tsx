@@ -1,3 +1,4 @@
+import { getProductImageUrl } from "@/lib/product-images"
 import Link from "next/link"
 import Image from "next/image"
 import { Product, Variant } from "@/lib/types"
@@ -23,7 +24,7 @@ export default function ProductList({ productsPromise }: {
           <Link href={"/products/" + product.id} key={product.id} className="group">
             <Card className="h-full overflow-hidden p-0 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10">
               <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-                <Image src={product.thumbnailImageUrl} alt={product.name} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+                <Image src={getProductImageUrl(product)} alt={product.name} fill className="object-contain transition duration-500 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
                 <Badge className="absolute left-4 top-4" variant="secondary">{product.category || "グッズ"}</Badge>
                 {isSoldOut ? <Badge className="absolute right-4 top-4" variant="destructive">売り切れ</Badge> : null}
               </div>
