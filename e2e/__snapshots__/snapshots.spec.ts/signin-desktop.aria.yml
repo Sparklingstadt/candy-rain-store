@@ -1,0 +1,9 @@
+- main:
+  - text: Demo account おかえりなさい デモアカウントでストアへサインインします。 Email
+  - textbox "Email": user1@mail.com
+  - text: Password
+  - textbox "Password": demo-password
+  - button "Sign In"
+  - paragraph: 入力例
+  - paragraph: "Email: user1@mail.com"
+  - paragraph: "Password: demo-password"

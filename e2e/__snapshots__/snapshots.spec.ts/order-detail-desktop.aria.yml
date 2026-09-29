@@ -1,0 +1,27 @@
+- main:
+  - link "注文一覧へ戻る":
+    - /url: /orders
+  - paragraph: /1\/1\/\d+, 9:\d+:\d+ AM/
+  - 'heading /Order #\d+/ [level=1]'
+  - text: 支払い待ち 未発送
+  - table:
+    - rowgroup:
+      - row "商品名 価格 数量 合計":
+        - columnheader "商品名"
+        - columnheader "価格"
+        - columnheader "数量"
+        - columnheader "合計"
+    - rowgroup:
+      - row /ランダム缶バッジ ¥\d+ 1 ¥\d+/:
+        - cell "ランダム缶バッジ"
+        - cell /¥\d+/
+        - cell "1"
+        - cell /¥\d+/
+  - text: お支払い内容
+  - paragraph: 小計(税込)
+  - paragraph: /¥\d+/
+  - paragraph: 送料(税込)
+  - paragraph: /¥\d+,\d+/
+  - separator
+  - paragraph: 合計
+  - paragraph: /¥\d+,\d+/

@@ -1,0 +1,40 @@
+import { test, expect } from "./fixtures/store"
+
+test.describe("商品操作 (#21)", () => {
+  test("一覧から詳細へ進み、選んだバリエーションと数量がカートに保存される", async ({ page, shopper }) => {
+    await shopper.signIn(page)
+    await page.getByRole("link", { name: /クリアファイル/ }).click()
+    await expect(page).toHaveURL(/\/products\/1$/)
+    await expect(page.getByRole("heading", { name: "クリアファイル", exact: true })).toBeVisible()
+    await expect(page.getByText("¥800〜", { exact: true })).toBeVisible()
+    await page.getByRole("button", { name: "クリアファイル B ¥800", exact: true }).click()
+    await page.getByRole("button", { name: "カートに追加" }).click()
+    await expect(page.getByRole("link", { name: "カート(1)" })).toBeVisible()
+    await page.goto("/cart")
+    const row = page.getByRole("row").filter({ hasText: "クリアファイル B" })
+    await expect(row).toBeVisible()
+    await expect(page.getByRole("cell", { name: "クリアファイル A", exact: true })).toHaveCount(0)
+    await expect(row.getByRole("button", { name: "数量を減らす" })).toBeDisabled()
+    await row.getByRole("button", { name: "数量を増やす" }).click()
+    await expect(row.getByRole("cell", { name: "¥1,600", exact: true })).toBeVisible()
+    await page.reload()
+    await expect(row.getByRole("cell", { name: "¥1,600", exact: true })).toBeVisible()
+    await row.getByRole("button", { name: "数量を減らす" }).click()
+    await expect(row.getByRole("button", { name: "数量を減らす" })).toBeDisabled()
+    await row.getByRole("button", { name: "削除", exact: true }).click()
+    await expect(page.getByText("カートの中は空です")).toBeVisible()
+    await page.reload()
+    await expect(page.getByText("カートの中は空です")).toBeVisible()
+    await page.getByRole("link", { name: "商品一覧へ戻る" }).click()
+    await expect(page.getByRole("heading", { name: "Products", exact: true })).toBeVisible()
+  })
+
+  for (const id of ["999999", "invalid", "-1"]) {
+    test(`存在しない・不正な商品ID ${id} に404を表示する`, async ({ page, shopper }) => {
+      await shopper.signIn(page)
+      await page.goto(`/products/${id}`)
+      await expect(page.getByRole("heading", { name: "404", exact: true })).toBeVisible()
+      await expect(page.getByRole("button", { name: "カートに追加" })).toHaveCount(0)
+    })
+  }
+})

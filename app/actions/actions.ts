@@ -1,5 +1,4 @@
 "use server"
-import { signOut } from "@/auth"
 import { requireUserId } from "@/lib/auth"
 import { requireNonNegativeInteger } from "@/lib/validation"
 import { removeItemFromCart } from "@/services/cartService"
@@ -13,11 +12,4 @@ export async function removeCartItem({ variantId }: {
   await removeItemFromCart(userId, validatedVariantId)
   revalidatePath("/", "layout")
   return { success: true }
-}
-
-export async function signOutAction() {
-  await signOut({
-    redirect: false,
-  })
-  revalidatePath("/", "layout")
 }

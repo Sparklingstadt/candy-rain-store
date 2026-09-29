@@ -1,15 +1,23 @@
 "use client"
-import Link from "next/link"
-import { signOutAction } from "@/app/actions/actions"
+import { signOut } from "next-auth/react"
+import { useState } from "react"
 import { LogOut } from "lucide-react"
-import { buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 
 export default function SignOut() {
+  const [isPending, setIsPending] = useState(false)
   const handleSignOut = async () => {
-    await signOutAction()
+    setIsPending(true)
+    try {
+      await signOut({ redirectTo: "/signout" })
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (
-    <Link href="/signout" className={buttonVariants({ variant: "outline" })} onClick={handleSignOut}><LogOut /> Sign out</Link>
+    <Button type="button" variant="outline" onClick={handleSignOut} disabled={isPending}>
+      <LogOut /> Sign out
+    </Button>
   )
 }

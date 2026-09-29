@@ -1,0 +1,6 @@
+- main:
+  - text: Order history
+  - heading "注文履歴" [level=1]
+  - paragraph: これまでの注文内容と配送状況を確認できます。
+  - paragraph: 注文はまだありません
+  - paragraph: 最初の商品を選んでみましょう。

@@ -145,6 +145,8 @@ DB 統合・E2E テストには migration と seed を適用した専用のロ�
 
 本番は [Vercel](https://candy-rain-store.vercel.app) で公開しています。通常のビルドは DB を更新しません。DB デモの migration は対象の `DATABASE_URL` を確認して `npm run db:migrate` を実行するか、[Migrate production database](.github/workflows/migrate-production.yml) を手動実行します。後者では GitHub の `production` Environment に `DATABASE_URL` secret を設定します。
 
+ページ表示・商品操作・desktop/mobile の ARIA スナップショットの対象と更新手順は [E2E テストガイド](e2e/README.md) を参照してください。
+
 ## 今後の課題
 
 - Service と Repository の責務を引き続き整理し、テスト対象を拡大する

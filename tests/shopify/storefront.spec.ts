@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test"
 
-test("guest shopping, cookie isolation, quantity, checkout handoff and removal", async ({ page, context, browser }) => {
+test("guest shopping, cookie isolation, quantity, checkout handoff and removal", async ({ page, context, browser, baseURL }) => {
   await page.goto("/products")
   await expect(page.getByRole("heading", { name: "テスト缶バッジ" })).toBeVisible()
   await page.getByRole("link", { name: "次の商品を見る" }).click()
@@ -26,7 +26,7 @@ test("guest shopping, cookie isolation, quantity, checkout handoff and removal",
   expect(await page.content()).not.toContain("TEST_CART_SECRET")
   const other = await browser.newContext()
   const otherPage = await other.newPage()
-  await otherPage.goto("http://127.0.0.1:3107/cart")
+  await otherPage.goto(new URL("/cart", baseURL).href)
   await expect(otherPage.getByText(/カートの中は空です/)).toBeVisible()
   await other.close()
   await page.route("https://candy-rain-test.myshopify.com/cart/**", route => route.fulfill({ contentType: "text/html", body: "<h1>Checkout handoff</h1>" }))
@@ -57,8 +57,8 @@ test("empty, failure, unknown product, accounts and mobile navigation", async ({
   await expect(page.getByRole("navigation", { name: "モバイルナビゲーション" })).toBeVisible()
 })
 
-test("stock rejection, adjustment warning and expired cart recovery", async ({ page, context }) => {
-  await context.addCookies([{ name: "candy_rain_shopify_cart", value: "gid://shopify/Cart/expired?key=expired", url: "http://127.0.0.1:3107", httpOnly: true }])
+test("stock rejection, adjustment warning and expired cart recovery", async ({ page, context, baseURL }) => {
+  await context.addCookies([{ name: "candy_rain_shopify_cart", value: "gid://shopify/Cart/expired?key=expired", url: baseURL!, httpOnly: true }])
   await page.goto("/products/badge")
   await page.getByLabel("数量").fill("13")
   await page.getByRole("button", { name: "カートに追加" }).click()

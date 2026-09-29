@@ -3,7 +3,7 @@ import { isShopifyEnabled } from "@/lib/shopify/config"
 import { NextResponse, type NextRequest } from "next/server"
 
 const demoProxy = auth((req) => {
-  if(!req.auth && req.nextUrl.pathname !== "/signin") {
+  if(!req.auth && !["/signin", "/signout"].includes(req.nextUrl.pathname)) {
     const newUrl = new URL("/signin", req.nextUrl.origin)
     return Response.redirect(newUrl)
   }
@@ -13,10 +13,14 @@ export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|svg|webp)$).*)"],
 }
 
-export function proxy(request: NextRequest, event: Parameters<typeof demoProxy>[1]) {
+export async function proxy(request: NextRequest, event: Parameters<typeof demoProxy>[1]) {
   if (isShopifyEnabled()) {
     if (request.nextUrl.pathname === "/signin" || request.nextUrl.pathname === "/signout" || request.nextUrl.pathname.startsWith("/account/") || request.nextUrl.pathname.startsWith("/orders/")) return NextResponse.redirect(new URL("/account", request.url))
     return NextResponse.next()
   }
-  return demoProxy(request, event)
+  const response = await demoProxy(request, event)
+  // Proxy only checks access. Auth endpoints own cookie mutations, so an
+  // in-flight page/prefetch response cannot restore a signed-out session.
+  response?.headers.delete("set-cookie")
+  return response
 }
