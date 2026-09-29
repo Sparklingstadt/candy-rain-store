@@ -42,7 +42,7 @@ export default function StoreHeader({ cartItemCount, signedIn }: { cartItemCount
             <ShoppingBag data-icon="inline-start" />
             {cartLabel}
           </Link>
-          <a href="https://github.com/Sparklingstadt/prd-ec-shop" target="_blank" rel="noreferrer" className={buttonVariants({ variant: "ghost", size: "icon" })}>
+          <a href="https://github.com/Sparklingstadt/prd-candy-rain-store" target="_blank" rel="noreferrer" className={buttonVariants({ variant: "ghost", size: "icon" })}>
             <Code2 />
             <span className="sr-only">GitHub</span>
           </a>

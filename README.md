@@ -1,113 +1,156 @@
-# Candy Rain Store / prd-ec-shop
+# Candy Rain Store
 
-ECストアの基本的な購入フローを実装したデモWebアプリです。
+Candy Rain は「小さなときめきを、ひと箱に。」をコンセプトに、オリジナルグッズの商品選びから購入手続きまでを体験できる EC ストアのデモ Web アプリです。リポジトリ名は `prd-candy-rain-store` です。
 
-バックエンド開発の学習を目的として、商品一覧・商品詳細・カート・購入・注文履歴をフルスタックで設計・実装しています。正常系の機能実装と責務分離を優先しており、入力バリデーションや厳密な認証、有限在庫の管理は将来の拡張対象です。
+**[デモを開く](https://candy-rain-store.vercel.app)** · [Shopify 連携ガイド](docs/shopify.md)
 
-## Shopify連携
+## 開発の目的
 
-商品・カート・購入手続きをShopifyへ接続するモードを追加しています。設定、下書き移行した商品、実ストア側の残作業は [Shopify連携ガイド](docs/shopify.md) を参照してください。
+バックエンド開発の学習を目的に、画面だけでなく、認証・カート・在庫・注文データの整合性まで含めた購入フローを設計・実装しています。まず PostgreSQL を使って注文処理を自作し、次に同じストア UI を Shopify Storefront API と接続することで、自前で担う処理と外部サービスへ委ねる処理の境界を学ぶ構成にしています。
 
-## デモ
+公開デモの接続先は Shopify の開発ストアです（2026-09-30 時点）。実販売用のストアではありません。テスト商品に加えて開発ストアのサンプル商品が含まれます。実販売への切り替え状況やテスト注文の確認記録は [連携ガイド](docs/shopify.md) を参照してください。
 
-https://candy-rain-store.vercel.app
+## 何ができるのか
 
-デモアカウントの入力内容はサインイン画面に記載しています。
+環境変数 `COMMERCE_PROVIDER` で、二つの動作モードを切り替えます。
 
-## 実装済みの機能
+| 機能 | DB デモ（`demo` または未指定） | Shopify 連携（`shopify`） |
+| --- | --- | --- |
+| 商品一覧・詳細 | PostgreSQL の商品・バリエーションを表示 | Storefront API から取得し、一覧をページ送り |
+| カート | サインインしたユーザーごとに DB へ保存 | ゲスト利用可能。カート ID を HttpOnly Cookie に保存 |
+| 数量変更・削除 | 入力値・所有者・在庫を確認 | 数量と対象行を確認し、Shopify の応答・警告を表示 |
+| 購入手続き | 在庫減算・注文作成・カート削除を一つのトランザクションで実行 | カートを再取得し Shopify Checkout へ遷移 |
+| アカウント・注文履歴 | Auth.js のデモ認証、注文一覧・詳細 | Shopify のホスト型アカウント画面へ案内 |
+| 決済・送料 | 実決済なし。デモ送料は 1,000 円 | Shopify Checkout が担当 |
 
-- Credentialsを利用したデモ用サインイン・サインアウト
-- 商品一覧・商品詳細・商品バリエーション表示
-- カートへの追加・数量変更・削除
-- Prismaトランザクションを利用した注文処理
-- 注文履歴・注文詳細の表示
-- Vercelへのデプロイ
+DB デモのサインイン情報はサインイン画面に記載しています。Shopify モードでは旧デモの更新処理を停止し、二つの注文・カートデータが混在しないようにしています。
 
-## 技術スタック
+## 使用しているもの
 
-- Next.js 16 / React 19
-- TypeScript
-- Prisma ORM 7
-- PostgreSQL
-- Tailwind CSS 4
-- shadcn/ui / Base UI / Lucide
-- Auth.js 5 beta
+| 技術 | 用途 |
+| --- | --- |
+| Next.js 16 / React 19 / TypeScript | App Router、Server Components、Server Actions による UI とサーバー処理 |
+| Prisma ORM 7 / PostgreSQL | DB デモの商品・ユーザー・カート・注文の永続化とトランザクション |
+| Auth.js 5 beta / bcryptjs | Credentials 認証とパスワードハッシュの照合 |
+| Shopify Storefront API | 商品・カートの取得と更新、Checkout への接続 |
+| Tailwind CSS 4 / shadcn/ui / Base UI / Lucide | レスポンシブ UI と共通コンポーネント |
+| Node.js Test Runner / tsx / Playwright | 単体・DB 統合・ブラウザー E2E テスト |
+| Docker Compose / GitHub Actions / Vercel | ローカル DB、継続的な品質確認、ホスティング |
 
-## アーキテクチャ
+具体的な依存バージョンは [package.json](package.json) と [package-lock.json](package-lock.json) を参照してください。
 
-次のレイヤー分離を目標に、段階的にリファクタリングしています。
+## どう設計したか
 
-- UI（Server Component / Client Component）
-- Server Action（入力受付・UI更新）
-- Service層（ビジネスロジック）
-- Repository層（DBアクセス）
+UI、入力を受け付ける Server Action、業務処理を担う Service、DB アクセスを担う Repository の責務を分けています。完全に抽象化しきるのではなく、処理のまとまりと整合性を優先し、段階的に整理しています。
 
-注文作成とカート削除は同じトランザクション内で処理し、購入時の商品名と価格を注文データに保存しています。
+```text
+app/                         ページ・UI・Server Actions
+  ↓ DB デモ                   ↓ Shopify 連携
+services/                    lib/shopify/
+  ↓                          ↓
+repositories/                Storefront API → Shopify Checkout
+  ↓
+Prisma → PostgreSQL
+```
 
-## 開発上の前提
+DB デモのカート操作は Repository を通します。一方、注文確定は複数テーブルを一括更新するため、[checkoutService](services/checkout/checkoutService.ts) が Prisma のトランザクションを直接管理します。Shopify 連携は [lib/shopify](lib/shopify) に API 通信・商品取得・カート操作をまとめています。
 
-本プロジェクトは学習用デモのため、常に正常な操作が行われるケースを中心に実装しています。
+## どう実装したか
 
-- 入力バリデーションは未実装
-- 認証はデモ用に簡略化
-- 在庫は無限として扱い、注文時の在庫確認・減算は行わない
-- ローカル開発ではDocker ComposeのPostgreSQLを利用
+- **注文と在庫の整合性**：DB デモでは在庫が注文数量以上の場合だけ減算します。在庫不足や注文作成の失敗時はトランザクションをロールバックし、途中の減算を残しません。注文には購入時のバリエーション名と価格を保存します。
+- **入力・所有者の確認**：ID や数量、更新操作をサーバーで検証し、サインイン中のユーザーが所有するカート・注文を対象にします。数量は 1〜99 を受け付けます。
+- **Shopify との接続**：価格・通貨・販売可否を API の応答に従って表示します。カート ID と private token をクライアントへ渡さず、API 失敗を空カートとして扱わないようにしています。
+- **購入前の再確認**：Shopify Checkout へ進む直前にカートを取り直し、売り切れ・在庫不足・調整警告を表示します。決済と最終在庫確認は Shopify が担当します。
+- **商品画像の一貫性**：[画像対応表](assets/candy-collection/shop-assets/image-mapping.json) を通して商品・バリエーションと素材を対応付けています。
 
-これらは実運用を想定する場合の追加課題です。
+## 学びと今後への活かし方
+
+| 実装を通じて扱った課題 | 学び | 今後への活かし方 |
+| --- | --- | --- |
+| 在庫減算・注文作成・カート削除 | 一つずつ成功するだけでは購入処理全体の整合性を保証できない | 複数データの更新では、先にトランザクションの境界と失敗時の状態を設計する |
+| UI と業務処理の分離 | 画面から業務ルールを分離すると、処理単位で検証しやすい | 機能追加でも Service と Repository の責務を見直し、変更範囲を限定する |
+| Shopify への接続 | 外部 API の失敗・警告・状態変化も購入体験の一部になる | 外部連携では正常系と合わせて再取得、エラー表示、秘密情報の扱いを設計する |
+| 単体・統合・E2E テスト | 計算、DB の整合性、画面操作では必要な検証の粒度が異なる | 変更対象に応じてテストを配置し、CI で回帰を検出する |
 
 ## ローカル開発
 
-Node.js、npm、Docker Desktopを使用します。ローカル開発時のPostgreSQLはDocker Composeで起動するため、Dockerの起動が必須です。
+Node.js 24 と npm 11.6.2 を使用します（CI と同じ構成）。
+
+```bash
+git clone https://github.com/Sparklingstadt/prd-candy-rain-store.git
+cd prd-candy-rain-store
+npm ci
+```
+
+### DB デモを動かす
+
+Docker Desktop を起動し、環境ファイルを用意します。
 
 ```bash
 cp .env.example .env
-npm install
+openssl rand -base64 32
+```
+
+生成した値で `.env` の `AUTH_SECRET` を置き換えてから、次を実行します。
+
+```bash
 npm run db:setup
 npm run dev
 ```
 
-以前の設定を使っていた場合は、既存の`.env`にある`DATABASE_URL`も`.env.example`と同じDocker用の接続先（ポート`5432`）へ更新してください。5432番を別のPostgreSQLが使用中の場合は、`.env`の`POSTGRES_PORT`と`DATABASE_URL`のポートを両方とも`5433`などの空きポートに変更できます。既存のPostgreSQLを停止する必要はありません。
+[localhost:3000](http://localhost:3000) を開きます。`db:setup` は設定確認、DB 起動、migration、seed を順に実行します。seed はデモユーザーのパスワード更新も含むため、学習用 DB を対象にしてください。
 
-`npm run dev`はPostgreSQLコンテナが起動済みであることを確認してからNext.jsを起動します。DBだけを操作する場合は次のコマンドを使用します。
-
-起動前に`npm run env:check`が`.env`のDocker DB接続先と`AUTH_SECRET`を検証します。エラーになった場合は`.env.example`を基準に設定を更新してください。
+5432 番ポートが使用中の場合は `.env` の `POSTGRES_PORT` と `DATABASE_URL` のポートを両方とも空きポートに変更します。`npm run dev` は DB デモの場合、設定を確認し PostgreSQL コンテナを起動してから Next.js を起動します。
 
 ```bash
-npm run db:start  # PostgreSQLを起動してhealthcheckを待つ
-npm run db:logs   # PostgreSQLのログを表示
-npm run db:stop   # コンテナを停止（データはvolumeに保持）
+npm run db:start  # PostgreSQL を起動し healthcheck を待つ
+npm run db:logs   # PostgreSQL のログを表示
+npm run db:stop   # 停止する。データは volume に保持
 ```
 
-`AUTH_SECRET`は次のコマンドなどで生成した値へ置き換えてください。
+### Shopify 連携を動かす
 
-```bash
-openssl rand -base64 32
+`.env.local` に接続先を設定します。接続先ストアで商品を対象の販売チャネルへ公開しておく必要があります。
+
+```dotenv
+COMMERCE_PROVIDER=shopify
+SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
+# Headless 販売チャネルを使う場合のみ設定するサーバー専用トークン
+SHOPIFY_STOREFRONT_PRIVATE_TOKEN=
 ```
 
-通常のアプリビルドはDB更新を行いません。ローカルDBへmigrationとseedをまとめて適用する場合は`npm run db:setup`を使用します。デプロイ先のDBへmigrationを適用する場合は、対象の`DATABASE_URL`を確認したうえで`npm run db:migrate`を明示的に実行します。
+```bash
+npx prisma generate
+npm run dev
+```
 
-本番DBのmigrationはGitHub Actionsの「Migrate production database」を手動実行します。GitHubの`production` Environmentに`DATABASE_URL` secretを登録し、必要に応じてEnvironmentの承認ルールを設定してください。
+このモードの起動には PostgreSQL と Docker は不要です。既存デモのモジュールも参照するため Prisma Client の生成は必要です。Admin API トークンは設定しないでください。詳細は [Shopify 連携ガイド](docs/shopify.md) を参照してください。
 
-## 品質チェック
+## 品質チェックとデプロイ
 
 ```bash
-npm test
-npm run test:integration
-npm run test:e2e
+npm test                   # 単体テスト
 npm run lint
+npx prisma generate
 npx tsc --noEmit
 npm run build
+npm run test:integration   # DB 統合テスト（DB デモ）
+npm run test:e2e           # ブラウザー E2E（DB デモ）
+npm run test:shopify       # Storefront API を差し替えた E2E
 ```
 
-Node.js Test Runnerとtsxによる単体・DB統合テストに加え、Playwrightによるサインインから購入完了までのE2Eテストを実装しています。統合・E2Eテストの前にDocker PostgreSQLへmigrationとseedを適用してください。main・devへのpushとPull RequestではGitHub ActionsがPostgreSQLを起動し、品質チェック、統合テスト、E2Eテストを自動実行します。
+DB 統合・E2E テストには migration と seed を適用した専用のローカル PostgreSQL を使用してください。`test:e2e` はデータをリセットするため、共有 DB や本番 DB を対象にしないでください。Playwright の初回実行前には `npx playwright install chromium` を実行します。Shopify E2E は本番ビルドを起動するので、先に `npm run build` が必要です。実ストアへの注文や決済は送信しません。
 
-## 今後の改善候補
+[GitHub Actions](.github/workflows/ci.yml) では main・dev への push と Pull Request を対象に、依存関係監査、単体テスト、lint、型チェック、ビルド、DB 統合・E2E、Shopify E2E を実行します。
 
-- Service層とRepository層の責務整理
-- 単体・統合テストの対象拡大
-- 入力バリデーションと認証・認可の強化
-- 有限在庫を扱う場合の在庫管理
+本番は [Vercel](https://candy-rain-store.vercel.app) で公開しています。通常のビルドは DB を更新しません。DB デモの migration は対象の `DATABASE_URL` を確認して `npm run db:migrate` を実行するか、[Migrate production database](.github/workflows/migrate-production.yml) を手動実行します。後者では GitHub の `production` Environment に `DATABASE_URL` secret を設定します。
 
+## 今後の課題
+
+- Service と Repository の責務を引き続き整理し、テスト対象を拡大する
+- デモ用認証から実運用向けのアカウント運用へ進める際の要件を整理する
+- Shopify の実販売用ストア・配送・決済設定を整える（現在は開発ストア）
+- 独自マイページが必要になった場合に Customer Account API の導入を検討する
 
 ## キャンディーモチーフの商品素材
 
