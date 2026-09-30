@@ -3,15 +3,9 @@
     - /url: /products
   - text: Your cart
   - heading "買い物かご" [level=1]
-  - paragraph: 0種類の商品が入っています。
-  - table:
-    - rowgroup:
-      - row "商品名 価格 数量 削除 合計":
-        - columnheader "商品名"
-        - columnheader "価格"
-        - columnheader "数量"
-        - columnheader "削除"
-        - columnheader "合計"
-    - rowgroup
   - paragraph: カートの中は空です
   - paragraph: お気に入りの商品を見つけて追加しましょう。
+  - link "商品を見る":
+    - /url: /products
+  - link "ホームへ戻る":
+    - /url: /

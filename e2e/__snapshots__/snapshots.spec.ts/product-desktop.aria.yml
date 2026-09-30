@@ -1,6 +1,13 @@
 - main:
-  - link "商品一覧へ戻る":
-    - /url: /products
+  - navigation "パンくずリスト":
+    - list:
+      - listitem:
+        - link "ホーム":
+          - /url: /
+      - listitem:
+        - link "商品一覧":
+          - /url: /products
+      - listitem: クリアファイル
   - region "商品画像":
     - img "クリアファイル"
     - button "クリアファイルの画像を表示" [pressed]
@@ -10,8 +17,11 @@
   - heading "クリアファイル" [level=1]
   - paragraph: /¥\d+〜/
   - paragraph: 日常にさりげない彩りを添える、Candy Rain Storeのオリジナルアイテムです。
-  - separator
   - paragraph: バリエーションを選択
   - button /クリアファイル A ¥\d+/
   - button /クリアファイル B ¥\d+/
   - button "カートに追加"
+  - list "ご購入について":
+    - listitem: デモストアのため実際の決済は発生しません
+    - listitem: 在庫は注文確定時にあらためて確認します
+    - listitem: /デモ送料は一律 ¥\d+,\d+ です/
