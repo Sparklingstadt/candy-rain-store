@@ -8,8 +8,10 @@ import { getCartByUserId, getCartItemsWithVariantsByCartId } from "@/services/st
 import { CartSummary } from "./CartSummary"
 import { cartItemRepository } from "@/repositories/implementations/cartItemRepository"
 import { cartRepository } from "@/repositories/implementations/cartRepository"
-import { ChevronLeft, ShoppingBag } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { ArrowRight, ChevronLeft, ShoppingBag } from "lucide-react"
+import { buttonVariants } from "@/components/ui/button"
+import EmptyState from "@/app/components/EmptyState"
+import PageHeader from "@/app/components/PageHeader"
 
 export default async function Page(){
   if (isShopifyEnabled()) return <ShopifyCartPage />
@@ -25,18 +27,18 @@ export default async function Page(){
   return (
     <div className="space-y-8">
       <Link href="/products" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ChevronLeft className="size-4" /> 商品一覧へ戻る</Link>
-      <div className="space-y-3">
-        <Badge variant="secondary"><ShoppingBag /> Your cart</Badge>
-        <h1 className="text-4xl font-semibold tracking-tight">買い物かご</h1>
-        <p className="text-muted-foreground">{cartItems.length}種類の商品が入っています。</p>
-      </div>
-      <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-        <CartItemTable cartItems={cartItems} />
-        <div className="space-y-4">
-          <CartSummary cartItems={cartItems} subTotalPrice={subTotalPrice} shippingFee={1000} totalPrice={totalPrice} />
-          {cartItems.length > 0 && <PlaceOrderButton />}
-        </div>
-      </div>
+      <PageHeader eyebrow="Your cart" title="買い物かご" tone="mint" description={cartItems.length > 0 ? `${cartItems.length}種類の商品が入っています。` : undefined} />
+      {cartItems.length === 0 ? <EmptyState icon={<ShoppingBag />} title="カートの中は空です" description="お気に入りの商品を見つけて追加しましょう。">
+          <Link href="/products" className={buttonVariants({ size: "lg", className: "h-11 px-5" })}>商品を見る <ArrowRight /></Link>
+          <Link href="/" className={buttonVariants({ variant: "outline", size: "lg", className: "h-11 bg-card px-5" })}>ホームへ戻る</Link>
+        </EmptyState>
+        : <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
+          <CartItemTable cartItems={cartItems} />
+          <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+            <CartSummary subTotalPrice={subTotalPrice} shippingFee={1000} totalPrice={totalPrice} />
+            <PlaceOrderButton />
+          </div>
+        </div>}
     </div>
   )
 }

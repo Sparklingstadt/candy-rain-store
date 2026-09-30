@@ -9,6 +9,7 @@ import { cartRepository } from "@/repositories/implementations/cartRepository";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import StoreHeader from "@/app/components/StoreHeader";
+import StoreFooter from "@/app/components/StoreFooter";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -44,12 +45,7 @@ export default async function RootLayout({
         <main className="page-shell py-8 sm:py-12">
           {children}
         </main>
-        <footer className="mt-16 border-t bg-card/60">
-          <div className="page-shell flex flex-col gap-2 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            <p>© 2026 Candy Rain Store</p>
-            <p>{shopify ? "小さなときめきを、ひと箱に。" : "正常系の購入体験を検証するデモストア"}</p>
-          </div>
-        </footer>
+        <StoreFooter shopify={shopify} />
       </body>
     </html>
   );

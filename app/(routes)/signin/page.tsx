@@ -1,14 +1,14 @@
 import { SignInForm } from "@/app/(routes)/signin/SignInForm"
-import { Badge } from "@/components/ui/badge"
+import CandyPill from "@/app/components/CandyPill"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const hasCredentialsError = (await searchParams).error === "credentials"
 
   return (
-    <Card className="shadow-xl shadow-primary/5">
+    <Card className="rounded-[1.75rem] shadow-xl shadow-primary/5">
       <CardHeader className="space-y-3">
-        <Badge variant="secondary" className="w-fit">Demo account</Badge>
+        <CandyPill>Demo account</CandyPill>
         <CardTitle className="text-2xl">おかえりなさい</CardTitle>
         <CardDescription>デモアカウントでストアへサインインします。</CardDescription>
       </CardHeader>
